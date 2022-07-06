@@ -1,53 +1,74 @@
-from flask import Flask, jsonify, request, redirect
+from flask import Flask, jsonify, request, redirect,render_template
 from flask.helpers import url_for
 from flask_pymongo import PyMongo
 from flask_cors import CORS, cross_origin
 import json
+from user.routes import *
+import os
+# from user import routes
 
-app = Flask(__name__)
+template_dir = os.path.abspath('./templates/')
+app = Flask(__name__,template_folder=template_dir)
+app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 cors = CORS(app)
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/store'
 app.config['CORS_Headers'] = 'Content-Type'
 mongo = PyMongo(app)
+productCollection = mongo.db.product
+
+@app.route('/dashboard')
+def index():
+    products = productCollection.find()
+    print("Products:",products)
+    return render_template('dashboard.html',products=products)
 
 @app.route('/', methods = ['GET'])
 def retrieveAll():
     holder = list()
-    currentCollection = mongo.db.product
-    for i in currentCollection.find({}, {'_id': 0 }):
+    productCollection = mongo.db.product
+    for i in productCollection.find({}, {'_id': 0 }):
         holder.append(i)
-    return jsonify(holder)
+    
 
-@app.route('/<name>', methods = ['GET'])
+@app.route('/<name>/', methods = ['GET'])
 @cross_origin()
 def retrieveFromName(name):
-    currentCollection = mongo.db.product
-    data = currentCollection.find_one({"name" : name},{'_id':0})
+    productCollection = mongo.db.product
+    data = productCollection.find_one({"name" : name},{'_id':0})
     return jsonify(data)
 
-@app.route('/postData', methods = ['POST'])
+@app.route('/postData/', methods = ['POST'])
 def postData():
-    currentCollection = mongo.db.product
-    name = request.json['name']
-    price = request.json['price']
-    brand = request.json['brand']
-    quantity = request.json['quantity']
-    date = request.json['date']
-    currentCollection.insert_one({'name' : name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date})
-    return jsonify({'name' : name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date})
+    # name = request.json['name']
+    # price = request.json['price']
+    # brand = request.json['brand']
+    # quantity = request.json['quantity']
+    # date = request.json['date']
+    
+    product_name = request.form.get('product_name')
+    price = request.form.get('price')
+    quantity = request.form.get('quantity')
+    brand = request.form.get('brand')
+    date = request.form.get('date')
+    
 
-@app.route('/deleteData/<name>', methods = ['DELETE'])
+    productCollection.insert_one({'name' : product_name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date})
+    # return jsonify({'name' : name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date})
+    return redirect(url_for('index'))
+
+@app.route('/deleteData/<name>/', methods = ['DELETE'])
 def deleteData(name):
-    currentCollection = mongo.db.product
-    currentCollection.delete_one({'name' : name})
+    productCollection = mongo.db.product
+    productCollection.delete_one({'name' : name})
     return redirect(url_for('retrieveAll'))
 
-@app.route('/update/<name>', methods = ['PUT'])
+@app.route('/update/<name>/', methods = ['PUT'])
 def updateData(name):
-    currentCollection = mongo.db.product
+    productCollection = mongo.db.product
     updatedName = request.json['name']
-    currentCollection.update_one({'name':name}, {"$set" : {'name' : updatedName}})
+    productCollection.update_one({'name':name}, {"$set" : {'name' : updatedName}})
     return redirect(url_for('retrieveAll'))
+
 
 if __name__ == '__main__':
     app.run(debug = True)
