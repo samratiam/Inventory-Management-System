@@ -5,6 +5,7 @@ from flask_cors import CORS, cross_origin
 import json
 from user.routes import *
 import os
+from bson import ObjectId
 # from user import routes
 
 template_dir = os.path.abspath('./templates/')
@@ -30,12 +31,12 @@ def retrieveAll():
         holder.append(i)
     
 
-@app.route('/<name>/', methods = ['GET'])
-@cross_origin()
-def retrieveFromName(name):
+@app.route('/retrieveData/<oid>/', methods = ['GET'])
+# @cross_origin()
+def retrieveData(oid):
     productCollection = mongo.db.product
-    data = productCollection.find_one({"name" : name},{'_id':0})
-    return jsonify(data)
+    product = productCollection.find_one({"_id" : ObjectId(oid)})
+    return render_template('update.html',product=product)
 
 @app.route('/postData/', methods = ['POST'])
 def postData():
@@ -56,20 +57,20 @@ def postData():
     # return jsonify({'name' : name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date})
     return redirect(url_for('index'))
 
-@app.route('/deleteData/<name>/')
-def deleteData(name):
+@app.route('/deleteData/<oid>/')
+def deleteData(oid):
     productCollection = mongo.db.product
-    productCollection.delete_one({'name' :name})
+    productCollection.delete_one({'_id' :ObjectId(oid)})
     return redirect(url_for('index'))
 
-# @app.route('/update/<oid>/', methods = ['PUT'])
-# def updateData(oid):
-#     productCollection = mongo.db.product
-#     productName = productCollection.find_one({'oid':})
-#     updatedName = request.form.get('product_name')
-#     productCollection.update_one({'oid':oid}, {"$set" : {'name' : updatedName}})
-#     return redirect(url_for('index'))
-    # return redirect(url_for('retrieveAll'))
+@app.route('/updateData/<oid>/',methods=['GET','POST'])
+def updateData(oid):
+    productCollection = mongo.db.product
+    product = productCollection.find_one({'oid':ObjectId(oid)})
+    updatedName = request.form.get('product_name')
+    productCollection.update_one({"_id":ObjectId(oid)}, {"$set" : {'name' : updatedName}})
+    return render_template('update.html',product=product)
+    # return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

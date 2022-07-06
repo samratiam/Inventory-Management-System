@@ -46,9 +46,13 @@
 						<td>{{product.brand}}</td>
 						<td>{{product.date}}</td>
 						<td>
-							<a href="#" class="btn btn-warning btn-sm">Edit</a>
 							<a
-								href="{{url_for('deleteData',name=product.name)}}"
+								href="{{url_for('updateData',oid=product._id)}}"
+								class="btn btn-warning btn-sm"
+								>Edit</a
+							>
+							<a
+								href="{{url_for('deleteData',oid=product._id)}}"
 								class="btn btn-danger btn-sm"
 								>Delete</a
 							>
