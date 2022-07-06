@@ -9,8 +9,8 @@
 		<div class="col-sm-3 mx-6">
 			<h4 class="text-center alert alert-info">Add a Product</h4>
 			<form method="POST" action="{{url_for('postData')}}">
-				Product Name: <input type="text" name="product_name" class="form-control
-				/><br />
+				Product Name:
+				<input type="text" name="product_name" class="form-control" /><br />
 				Price:<input type="number" name="price" class="form-control" /><br />
 				Quantity:<input
 					type="number"
@@ -47,13 +47,11 @@
 						<td>{{product.date}}</td>
 						<td>
 							<a href="#" class="btn btn-warning btn-sm">Edit</a>
-							<form action="#" method="post" class="d-inline">
-								<input
-									type="submit"
-									class="btn btn-danger btn-sm"
-									value="Delete"
-								/>
-							</form>
+							<a
+								href="{{url_for('deleteData',name=product.name)}}"
+								class="btn btn-danger btn-sm"
+								>Delete</a
+							>
 						</td>
 					</tr>
 					{%endfor%}

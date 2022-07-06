@@ -56,18 +56,20 @@ def postData():
     # return jsonify({'name' : name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date})
     return redirect(url_for('index'))
 
-@app.route('/deleteData/<name>/', methods = ['DELETE'])
+@app.route('/deleteData/<name>/')
 def deleteData(name):
     productCollection = mongo.db.product
-    productCollection.delete_one({'name' : name})
-    return redirect(url_for('retrieveAll'))
+    productCollection.delete_one({'name' :name})
+    return redirect(url_for('index'))
 
-@app.route('/update/<name>/', methods = ['PUT'])
-def updateData(name):
-    productCollection = mongo.db.product
-    updatedName = request.json['name']
-    productCollection.update_one({'name':name}, {"$set" : {'name' : updatedName}})
-    return redirect(url_for('retrieveAll'))
+# @app.route('/update/<oid>/', methods = ['PUT'])
+# def updateData(oid):
+#     productCollection = mongo.db.product
+#     productName = productCollection.find_one({'oid':})
+#     updatedName = request.form.get('product_name')
+#     productCollection.update_one({'oid':oid}, {"$set" : {'name' : updatedName}})
+#     return redirect(url_for('index'))
+    # return redirect(url_for('retrieveAll'))
 
 
 if __name__ == '__main__':
