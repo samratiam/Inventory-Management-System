@@ -65,11 +65,13 @@ def deleteData(oid):
 
 @app.route('/updateData/<oid>/',methods=['GET','POST'])
 def updateData(oid):
-    productCollection = mongo.db.product
-    product = productCollection.find_one({'oid':ObjectId(oid)})
-    updatedName = request.form.get('product_name')
-    productCollection.update_one({"_id":ObjectId(oid)}, {"$set" : {'name' : updatedName}})
-    return render_template('update.html',product=product)
+    if request.method=='POST':
+        productCollection = mongo.db.product
+        product = productCollection.find_one({'_id':ObjectId(oid)})
+        updatedName = request.form.get('product_name')
+    
+        productCollection.update_one({"_id":ObjectId(oid)}, {"$set" : {'name' : updatedName}})
+        return render_template('update.html',product=product)
     # return redirect(url_for('index'))
 
 
