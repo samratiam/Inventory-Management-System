@@ -17,18 +17,19 @@ app.config['CORS_Headers'] = 'Content-Type'
 mongo = PyMongo(app)
 productCollection = mongo.db.product
 
-@app.route('/dashboard')
+@app.route('/')
 def index():
     products = productCollection.find()
     print("Products:",products)
     return render_template('dashboard.html',products=products)
 
-@app.route('/', methods = ['GET'])
-def retrieveAll():
-    holder = list()
-    productCollection = mongo.db.product
-    for i in productCollection.find({}, {'_id': 0 }):
-        holder.append(i)
+# @app.route('/', methods = ['GET'])
+# def retrieveAll():
+#     holder = list()
+#     productCollection = mongo.db.product
+#     for i in productCollection.find({}, {'_id': 0 }):
+#         holder.append(i)
+#     return render_template('dashboard.html')
     
 
 @app.route('/retrieveData/<oid>/', methods = ['GET'])
@@ -66,13 +67,16 @@ def deleteData(oid):
 @app.route('/updateData/<oid>/',methods=['GET','POST'])
 def updateData(oid):
     if request.method=='POST':
-        productCollection = mongo.db.product
+        # productCollection = mongo.db.product
         product = productCollection.find_one({'_id':ObjectId(oid)})
         updatedName = request.form.get('product_name')
     
         productCollection.update_one({"_id":ObjectId(oid)}, {"$set" : {'name' : updatedName}})
         return render_template('update.html',product=product)
-    # return redirect(url_for('index'))
+    else:
+        product = productCollection.find_one({'_id':ObjectId(oid)})
+        # updatedName = request.form.get('product_name')
+        return render_template('update.html',product=product)
 
 
 if __name__ == '__main__':
