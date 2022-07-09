@@ -1,0 +1,53 @@
+* {
+	padding: 0;
+	overflow: hidden;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+.gradient-custom {
+	background: #f093fb;
+
+	background: -webkit-linear-gradient(
+		to bottom right,
+		rgba(240, 147, 251, 1),
+		rgba(245, 87, 108, 1)
+	);
+
+	background: linear-gradient(
+		to bottom right,
+		rgba(240, 147, 251, 1),
+		rgba(245, 87, 108, 1)
+	);
+}
+
+.gradient-custom-3 {
+	background: #84fab0;
+
+	background: -webkit-linear-gradient(
+		to right,
+		rgba(132, 250, 176, 0.5),
+		rgba(143, 211, 244, 0.5)
+	);
+
+	background: linear-gradient(
+		to right,
+		rgba(132, 250, 176, 0.5),
+		rgba(143, 211, 244, 0.5)
+	);
+}
+.gradient-custom-4 {
+	background: #84fab0;
+
+	background: -webkit-linear-gradient(
+		to right,
+		rgba(132, 250, 176, 1),
+		rgba(143, 211, 244, 1)
+	);
+
+	background: linear-gradient(
+		to right,
+		rgba(132, 250, 176, 1),
+		rgba(143, 211, 244, 1)
+	);
+}
