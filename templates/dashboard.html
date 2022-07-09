@@ -47,6 +47,11 @@
 						<td>{{product.date}}</td>
 						<td>
 							<a
+								href="{{url_for('viewData',oid=product._id)}}"
+								class="btn btn-success btn-sm"
+								>View</a
+							>
+							<a
 								href="{{url_for('updateData',oid=product._id)}}"
 								class="btn btn-warning btn-sm"
 								>Edit</a

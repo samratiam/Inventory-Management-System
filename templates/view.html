@@ -1,0 +1,52 @@
+<link
+	rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous"
+/>
+
+<div class="row">
+	<div class="col-sm-8 offset-2">
+		<h4 class="text-center alert alert-info">View Product Information</h4>
+		<form>
+			Name:<input
+				type="text"
+				name="product_name"
+				value="{{product.name}}"
+				class="form-control"
+				readonly
+			/>
+			<br />
+			Price:<input
+				type="number"
+				name="price"
+				class="form-control"
+				value="{{product.price}}"
+				readonly
+			/><br />
+			Quantity:<input
+				type="number"
+				name="quantity"
+				class="form-control"
+				value="{{product.quantity}}"
+				readonly
+			/><br />
+			Brand:<input
+				type="text"
+				name="brand"
+				class="form-control"
+				value="{{product.brand}}"
+				readonly
+			/><br />
+			Date:<input
+				type="date"
+				name="date"
+				class="form-control"
+				value="{{product.date}}"
+				readonly
+			/><br />
+
+			<a href="/" class="btn btn-info">Back to Home</a>
+		</form>
+	</div>
+</div>

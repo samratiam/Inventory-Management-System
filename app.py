@@ -31,6 +31,11 @@ def index():
 #         holder.append(i)
 #     return render_template('dashboard.html')
     
+@app.route('/viewData/<oid>/', methods = ['GET'])
+def viewData(oid):
+    productCollection = mongo.db.product
+    product = productCollection.find_one({"_id" : ObjectId(oid)})
+    return render_template('view.html',product=product)
 
 @app.route('/retrieveData/<oid>/', methods = ['GET'])
 # @cross_origin()
@@ -75,7 +80,6 @@ def updateData(oid):
         return render_template('update.html',product=product)
     else:
         product = productCollection.find_one({'_id':ObjectId(oid)})
-        # updatedName = request.form.get('product_name')
         return render_template('update.html',product=product)
 
 
