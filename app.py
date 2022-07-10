@@ -1,10 +1,11 @@
-from flask import Flask, jsonify, request, redirect,render_template
+from flask import Flask, jsonify, request, redirect,render_template,session
 from flask.helpers import url_for
 from flask_pymongo import PyMongo
 import json
 import os
 from bson import ObjectId
 from passlib.hash import pbkdf2_sha256
+
 
 template_dir = os.path.abspath('./templates/')
 app = Flask(__name__,template_folder=template_dir)
@@ -88,10 +89,37 @@ def signup():
             user = {'fullname':fullname,'email':email,'password':password}
             currentCollection.insert_one(user)
             print("User signed up successfully")
-        return redirect(url_for('index'))
+            return redirect(url_for('index'))
     else:
         return render_template('signup.html')
-    
+
+###Start a session
+def start_session(user):
+    del user['password']
+    session['logged_in'] = True
+    session['user'] = user
+
+@app.route('/login/',methods=['GET','POST'])
+def login():
+    if request.method=='POST':
+        currentCollection = mongo.db.users
+        user = currentCollection.find_one({
+        "email": request.form.get('email')
+        })
+
+        if user and pbkdf2_sha256.verify(request.form.get('password'), user['password']):
+            print("User:",user)
+            session['email'] = request.form.get('email')
+            return redirect(url_for('index'))
+        else:
+            return "Invalid credentials"
+    else:
+        return render_template('login.html')
+
+@app.route('/signout/')
+def logout():
+    session.pop('email',None)
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug = True)
