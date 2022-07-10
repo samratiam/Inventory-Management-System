@@ -1,9 +1,4 @@
-<link
-	rel="stylesheet"
-	href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-	crossorigin="anonymous"
-/>
+{%include 'base.html'%}
 <div class="container my-3">
 	<div class="row">
 		<div class="col-sm-3 mx-6">
@@ -20,9 +15,6 @@
 				Brand:<input type="text" name="brand" class="form-control" /><br />
 				Date:<input type="date" name="date" class="form-control" /><br />
 				<input type="submit" class="btn btn-success mx-3" value="Add" />
-				<a href="{{url_for('logout')}}" class="btn btn-primary btn-sm"
-					>Logout</a
-				>
 			</form>
 		</div>
 

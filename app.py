@@ -5,21 +5,11 @@ import json
 import os
 from bson import ObjectId
 from passlib.hash import pbkdf2_sha256
-# from flask_login import *
 
 template_dir = os.path.abspath('./templates/')
 app = Flask(__name__,template_folder=template_dir)
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/store'
-app.config['CORS_Headers'] = 'Content-Type'
-
-
-# from flask_login import LoginManager
-# login_manager = LoginManager()
-# login_manager.init_app(app)
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return User.get(user_id)
 
 mongo = PyMongo(app)
 
@@ -42,7 +32,6 @@ productCollection = mongo.db.product
 @login_required
 def index():
     products = productCollection.find()
-    print("Products:",products)
     return render_template('dashboard.html',products=products)
     
 @app.route('/viewData/<oid>/', methods = ['GET'])
@@ -104,7 +93,7 @@ def signup():
             password = pbkdf2_sha256.hash(password1)
             user = {'fullname':fullname,'email':email,'password':password}
             userCollection.insert_one(user)
-            flash("User signed up successfully")
+            flash("User account created successfully")
             return redirect(url_for('login'))
         elif password1 != password2:
             flash("Password didn't match")
