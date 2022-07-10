@@ -5,7 +5,8 @@
 		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 		crossorigin="anonymous"
 	/>
-	<link rel="stylesheet" href="style.css" />
+
+	<link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}" />
 </head>
 
 {%with messages = get_flashed_messages()%} {%if messages%} {%for msg in
@@ -13,7 +14,7 @@ messages%}
 <div class="alert alert-warning" role="alert">{{msg}}</div>
 {%endfor%} {%endif%} {%endwith%}
 
-<section class="vh-100 gradient-custom">
+<section class="vh-100">
 	<div class="mask d-flex align-items-center h-100 gradient-custom">
 		<div class="container h-100">
 			<div class="row d-flex justify-content-center align-items-center h-100">

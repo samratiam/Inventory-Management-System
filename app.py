@@ -7,7 +7,8 @@ from bson import ObjectId
 from passlib.hash import pbkdf2_sha256
 
 template_dir = os.path.abspath('./templates/')
-app = Flask(__name__,template_folder=template_dir)
+STATIC_DIR = os.path.abspath('./static')
+app = Flask(__name__,template_folder=template_dir,static_folder=STATIC_DIR)
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/store'
 

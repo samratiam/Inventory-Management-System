@@ -4,8 +4,12 @@
 	margin: 0;
 	box-sizing: border-box;
 }
-
 .gradient-custom {
+	background: rgb(13,9,75);
+	background: linear-gradient(90deg, rgba(13,9,75,1) 100%, rgba(0,212,255,1) 100%);
+}
+
+/* .gradient-custom {
 	background: #f093fb;
 
 	background: -webkit-linear-gradient(
@@ -51,3 +55,4 @@
 		rgba(143, 211, 244, 1)
 	);
 }
+ */
