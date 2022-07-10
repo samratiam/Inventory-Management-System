@@ -74,6 +74,13 @@ def updateData(oid):
     else:
         product = productCollection.find_one({'_id':ObjectId(oid)})
         return render_template('update.html',product=product)
+    
+@app.route('/search/',methods=['POST'])
+def search():
+    if request.method=='POST':
+        keyword = request.form.get('keyword')
+        products = productCollection.find({ 'name':keyword })
+        return render_template('search.html',products=products)
 
 #####User signup and login
 
