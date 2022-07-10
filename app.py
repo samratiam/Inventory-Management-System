@@ -1,22 +1,45 @@
-from flask import Flask, jsonify, request, redirect,render_template,session
+from flask import Flask, jsonify, request, redirect,render_template,session,flash
 from flask.helpers import url_for
 from flask_pymongo import PyMongo
 import json
 import os
 from bson import ObjectId
 from passlib.hash import pbkdf2_sha256
-
+# from flask_login import *
 
 template_dir = os.path.abspath('./templates/')
 app = Flask(__name__,template_folder=template_dir)
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/store'
 app.config['CORS_Headers'] = 'Content-Type'
+
+
+# from flask_login import LoginManager
+# login_manager = LoginManager()
+# login_manager.init_app(app)
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User.get(user_id)
+
 mongo = PyMongo(app)
+
+from functools import wraps
+
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash("You need to login first")
+            return redirect(url_for('login'))
+
+    return wrap
 
 #####Inventory Products CRUD
 productCollection = mongo.db.product
 @app.route('/')
+@login_required
 def index():
     products = productCollection.find()
     print("Products:",products)
@@ -94,10 +117,10 @@ def signup():
         return render_template('signup.html')
 
 ###Start a session
-def start_session(user):
-    del user['password']
-    session['logged_in'] = True
-    session['user'] = user
+# def start_session(user):
+#     del user['password']
+#     session['logged_in'] = True
+#     session['user'] = user
 
 @app.route('/login/',methods=['GET','POST'])
 def login():
@@ -109,7 +132,9 @@ def login():
 
         if user and pbkdf2_sha256.verify(request.form.get('password'), user['password']):
             print("User:",user)
+            # login_user(user)
             session['email'] = request.form.get('email')
+            session['logged_in'] = True
             return redirect(url_for('index'))
         else:
             return "Invalid credentials"
@@ -119,6 +144,7 @@ def login():
 @app.route('/signout/')
 def logout():
     session.pop('email',None)
+    session.pop('logged_in',False)
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
