@@ -44,14 +44,6 @@ def index():
     products = productCollection.find()
     print("Products:",products)
     return render_template('dashboard.html',products=products)
-
-# @app.route('/', methods = ['GET'])
-# def retrieveAll():
-#     holder = list()
-#     productCollection = mongo.db.product
-#     for i in productCollection.find({}, {'_id': 0 }):
-#         holder.append(i)
-#     return render_template('dashboard.html')
     
 @app.route('/viewData/<oid>/', methods = ['GET'])
 def viewData(oid):
@@ -98,41 +90,37 @@ def updateData(oid):
 
 @app.route('/signup/',methods=['GET','POST'])
 def signup():
-    currentCollection = mongo.db.users
+    userCollection = mongo.db.users
     if request.method == 'POST':
         fullname = request.form.get('fullname')
         email = request.form.get('email')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
         
-        if currentCollection.find_one({ "email": email }):
-            print("Email address already in use")
+        if userCollection.find_one({ "email": email }):
+            flash("Email address already is in use")
+            return redirect(url_for('signup'))
         elif password1 == password2:
             password = pbkdf2_sha256.hash(password1)
             user = {'fullname':fullname,'email':email,'password':password}
-            currentCollection.insert_one(user)
-            print("User signed up successfully")
-            return redirect(url_for('index'))
+            userCollection.insert_one(user)
+            flash("User signed up successfully")
+            return redirect(url_for('login'))
+        elif password1 != password2:
+            flash("Password didn't match")
+            return redirect(url_for('signup'))
     else:
         return render_template('signup.html')
-
-###Start a session
-# def start_session(user):
-#     del user['password']
-#     session['logged_in'] = True
-#     session['user'] = user
 
 @app.route('/login/',methods=['GET','POST'])
 def login():
     if request.method=='POST':
-        currentCollection = mongo.db.users
-        user = currentCollection.find_one({
+        userCollection = mongo.db.users
+        user = userCollection.find_one({
         "email": request.form.get('email')
         })
 
         if user and pbkdf2_sha256.verify(request.form.get('password'), user['password']):
-            print("User:",user)
-            # login_user(user)
             session['email'] = request.form.get('email')
             session['logged_in'] = True
             return redirect(url_for('index'))
