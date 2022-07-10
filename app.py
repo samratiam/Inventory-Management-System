@@ -1,22 +1,20 @@
 from flask import Flask, jsonify, request, redirect,render_template
 from flask.helpers import url_for
 from flask_pymongo import PyMongo
-from flask_cors import CORS, cross_origin
 import json
-from user.routes import *
 import os
 from bson import ObjectId
-# from user import routes
+from passlib.hash import pbkdf2_sha256
 
 template_dir = os.path.abspath('./templates/')
 app = Flask(__name__,template_folder=template_dir)
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
-cors = CORS(app)
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/store'
 app.config['CORS_Headers'] = 'Content-Type'
 mongo = PyMongo(app)
-productCollection = mongo.db.product
 
+#####Inventory Products CRUD
+productCollection = mongo.db.product
 @app.route('/')
 def index():
     products = productCollection.find()
@@ -38,29 +36,20 @@ def viewData(oid):
     return render_template('view.html',product=product)
 
 @app.route('/retrieveData/<oid>/', methods = ['GET'])
-# @cross_origin()
 def retrieveData(oid):
     productCollection = mongo.db.product
     product = productCollection.find_one({"_id" : ObjectId(oid)})
     return render_template('update.html',product=product)
 
 @app.route('/postData/', methods = ['POST'])
-def postData():
-    # name = request.json['name']
-    # price = request.json['price']
-    # brand = request.json['brand']
-    # quantity = request.json['quantity']
-    # date = request.json['date']
-    
+def postData(): 
     product_name = request.form.get('product_name')
     price = request.form.get('price')
     quantity = request.form.get('quantity')
     brand = request.form.get('brand')
     date = request.form.get('date')
-    
 
     productCollection.insert_one({'name' : product_name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date})
-    # return jsonify({'name' : name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date})
     return redirect(url_for('index'))
 
 @app.route('/deleteData/<oid>/')
@@ -72,7 +61,6 @@ def deleteData(oid):
 @app.route('/updateData/<oid>/',methods=['GET','POST'])
 def updateData(oid):
     if request.method=='POST':
-        # productCollection = mongo.db.product
         product = productCollection.find_one({'_id':ObjectId(oid)})
         updatedName = request.form.get('product_name')
     
@@ -82,6 +70,28 @@ def updateData(oid):
         product = productCollection.find_one({'_id':ObjectId(oid)})
         return render_template('update.html',product=product)
 
+#####User signup and login
+
+@app.route('/signup/',methods=['GET','POST'])
+def signup():
+    currentCollection = mongo.db.users
+    if request.method == 'POST':
+        fullname = request.form.get('fullname')
+        email = request.form.get('email')
+        password1 = request.form.get('password1')
+        password2 = request.form.get('password2')
+        
+        if currentCollection.find_one({ "email": email }):
+            print("Email address already in use")
+        elif password1 == password2:
+            password = pbkdf2_sha256.hash(password1)
+            user = {'fullname':fullname,'email':email,'password':password}
+            currentCollection.insert_one(user)
+            print("User signed up successfully")
+        return redirect(url_for('index'))
+    else:
+        return render_template('signup.html')
+    
 
 if __name__ == '__main__':
     app.run(debug = True)
