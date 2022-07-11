@@ -67,10 +67,15 @@ def deleteData(oid):
 @app.route('/updateData/<oid>/',methods=['GET','POST'])
 def updateData(oid):
     if request.method=='POST':
-        product = productCollection.find_one({'_id':ObjectId(oid)})
         updatedName = request.form.get('product_name')
-    
-        productCollection.update_one({"_id":ObjectId(oid)}, {"$set" : {'name' : updatedName}})
+        updatedPrice = request.form.get('price')
+        updatedQuantity = request.form.get('quantity')
+        updatedBrand = request.form.get('brand')
+        updatedDate = request.form.get('date')
+        
+        productCollection.update_one({"_id":ObjectId(oid)}, {"$set" : {"name" : updatedName,"price" : updatedPrice,"quantity" : updatedQuantity,"brand" : updatedBrand,"date":updatedDate}})
+        
+        product = productCollection.find_one({'_id':ObjectId(oid)})
         return render_template('update.html',product=product)
     else:
         product = productCollection.find_one({'_id':ObjectId(oid)})
