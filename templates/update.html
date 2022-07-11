@@ -1,4 +1,7 @@
-{%include 'base.html'%}
+{%include 'base.html'%} {%with messages = get_flashed_messages()%} {%if
+messages%} {%for msg in messages%}
+<div class="alert alert-warning" role="alert">{{msg}}</div>
+{%endfor%} {%endif%} {%endwith%}
 
 <div class="row">
 	<div class="col-sm-8 offset-2">

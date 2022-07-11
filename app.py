@@ -56,12 +56,14 @@ def postData():
     date = request.form.get('date')
 
     productCollection.insert_one({'name' : product_name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date})
+    flash("A new product is added")
     return redirect(url_for('index'))
 
 @app.route('/deleteData/<oid>/')
 def deleteData(oid):
     productCollection = mongo.db.product
     productCollection.delete_one({'_id' :ObjectId(oid)})
+    flash(f"Product id {oid} is deleted" )
     return redirect(url_for('index'))
 
 @app.route('/updateData/<oid>/',methods=['GET','POST'])
@@ -76,6 +78,7 @@ def updateData(oid):
         productCollection.update_one({"_id":ObjectId(oid)}, {"$set" : {"name" : updatedName,"price" : updatedPrice,"quantity" : updatedQuantity,"brand" : updatedBrand,"date":updatedDate}})
         
         product = productCollection.find_one({'_id':ObjectId(oid)})
+        flash("Product data is updated ")
         return render_template('update.html',product=product)
     else:
         product = productCollection.find_one({'_id':ObjectId(oid)})
