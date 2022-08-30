@@ -33,6 +33,7 @@ productCollection = mongo.db.product
 @login_required
 def index():
     products = productCollection.find()
+    print("Products:",products)
     return render_template('dashboard.html',products=products)
     
 @app.route('/viewData/<oid>/', methods = ['GET'])
@@ -54,8 +55,13 @@ def postData():
     quantity = request.form.get('quantity')
     brand = request.form.get('brand')
     date = request.form.get('date')
+    productList = {'name' : product_name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date}
+    # print("Product list:",productList)
+    for key in productList.copy():
+        if productList[key] == '':
+            productList.pop(key)
 
-    productCollection.insert_one({'name' : product_name, 'price' : price, 'quantity' : quantity,'brand':brand,'date':date})
+    productCollection.insert_one(productList)
     flash("A new product is added")
     return redirect(url_for('index'))
 
